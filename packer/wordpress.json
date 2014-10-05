@@ -1,4 +1,10 @@
 {
+  "variables": {
+    "name": null,
+    "ssl_certificate_file": "{{env `SSL_CERTIFICATE_FILE`}}",
+    "ssl_private_key_file": "{{env `SSL_PRIVATE_KEY_FILE`}}",
+    "ssl_certificate_chain_file": "{{env `SSL_CERTIFICATE_CHAIN_FILE`}}"
+  },
   "builders": [
     {
       "type": "amazon-ebs",
@@ -6,7 +12,7 @@
       "source_ami": "ami-08842d60",
       "instance_type": "t2.micro",
       "ssh_username": "ec2-user",
-      "ami_name": "Wordpress ({{isotime | clean_ami_name}})",
+      "ami_name": "{{user `name`}}",
       "tags": {
         "Name": "Wordpress"
       }
@@ -17,6 +23,26 @@
       "type": "file",
       "source": "resources/wp-config.php",
       "destination": "/tmp/wp-config.php"
+    },
+    {
+      "type": "file",
+      "source": "resources/ssl.conf",
+      "destination": "/tmp/ssl.conf"
+    },
+    {
+      "type": "file",
+      "source": "{{user `ssl_certificate_file`}}",
+      "destination": "/tmp/localhost.crt"
+    },
+    {
+      "type": "file",
+      "source": "{{user `ssl_private_key_file`}}",
+      "destination": "/tmp/localhost.key"
+    },
+    {
+      "type": "file",
+      "source": "{{user `ssl_certificate_chain_file`}}",
+      "destination": "/tmp/server-chain.crt"
     },
     {
       "type": "shell",
@@ -31,10 +57,17 @@
         "tar -xzf latest.tar.gz",
         "rm latest.tar.gz",
         "sudo mv wordpress/* /var/www/html/",
+        "wget https://downloads.wordpress.org/plugin/wp-stats.zip",
+        "sudo unzip wp-stats.zip -d /var/www/html/wp-content/plugins",
+        "rm wp-stats.zip",
         "sudo mv /tmp/wp-config.php /var/www/html/",
 	"sudo chgrp -R www /var/www/html/",
         "sudo chown -R root /var/www/html/",
 	"sudo chmod 775 /var/www/html/wp-content/",
+        "sudo mv /tmp/ssl.conf /etc/httpd/conf.d/",
+        "sudo mv /tmp/localhost.crt /etc/pki/tls/certs/",
+        "sudo mv /tmp/localhost.key /etc/pki/tls/private/",
+        "sudo mv /tmp/server-chain.crt /etc/pki/tls/certs/"
       ]
     }
   ]
