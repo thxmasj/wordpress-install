@@ -3,13 +3,16 @@
 if [ ! $# -eq 1 ]; then echo "No AMI id specified"; exit 1; fi
 
 image_id=$1
+subnet_id=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=WordPressWeb" | jq -r ".Subnets[].SubnetId")
+sg_id=$(aws ec2 describe-security-groups --filters "Name=group-name,Values=WordPressWeb" | jq -r ".SecurityGroups[].GroupId")
 
 instance_details=$(aws ec2 run-instances \
  --image-id $image_id \
  --instance-type t2.micro \
- --security-groups WordPress \
- --placement AvailabilityZone=us-east-1a \
- --region=us-east-1 \
+ --subnet-id $subnet_id \
+ --security-group-ids $sg_id \
+ --key-name thomasjohansen.it \
+ --associate-public-ip-address \
  --count=1 \
 )
 
