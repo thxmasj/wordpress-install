@@ -15,8 +15,8 @@ subnet_db2_id=$(aws ec2 create-subnet --vpc-id $vpc_id --cidr-block 172.32.3.0/2
 echo "Setting up Internet gateway..."
 igw_id=$(aws ec2 create-internet-gateway | jq -r ".InternetGateway.InternetGatewayId")
 aws ec2 attach-internet-gateway --internet-gateway-id $igw_id --vpc-id $vpc_id
-route_table_id=$(aws ec2 describe-route-tables --filters 'Name=route.gateway-id,Values=$igw_id' | jq -r ".RouteTables[].RouteTableId")
-aws ec2 create-route --route-table-id rtb-b2bc39d7 --destination-cidr-block 0.0.0.0/0 --gateway-id $igw_id
+route_table_id=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$vpc_id" | jq -r ".RouteTables[].RouteTableId")
+aws ec2 create-route --route-table-id $route_table_id --destination-cidr-block 0.0.0.0/0 --gateway-id $igw_id
 
 #
 # FIREWALLS
