@@ -48,7 +48,7 @@
       "type": "shell",
       "inline": [
         "sudo yum -y update",
-        "sudo yum -y install httpd php php-mysql mod_ssl",
+        "sudo yum -y install httpd24 php55 php55-mysqlnd mod24_ssl",
         "sudo chkconfig --add httpd",
         "#sudo chkconfig httpd on",
         "sudo groupadd www",
