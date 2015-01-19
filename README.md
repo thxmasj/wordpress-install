@@ -7,13 +7,13 @@ Software requirements:
 
 * jq  
   OS X: brew install jq  
-  Fedora/RHEL: yum install jq
+  Fedora/RHEL: sudo yum install jq
 * packer  
   OS X: brew tap homebrew/binary; brew install packer  
-  Fedora/RHEL: yum install packer
+  Fedora/RHEL: sudo yum install packer
 * AWS CLI  
   OS X: brew install awscli  
-  Fedora/RHEL: yum install awscli
+  Fedora/RHEL: sudo yum install python-pip; sudo pip install awscli
   
 Environment variables:
 
